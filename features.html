@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitur Tambahan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Leaflet.js for maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        // 1. Notifikasi Jadwal Kegiatan
+        function requestNotificationPermission() {
+            if (Notification.permission !== "granted") {
+                Notification.requestPermission();
+            }
+        }
+
+        function showNotification(title, message) {
+            if (Notification.permission === "granted") {
+                new Notification(title, { body: message });
+            }
+        }
+
+        // 2. Fitur Donasi Digital
+        function donate() {
+            alert("Terima kasih atas niat baik Anda! Segera lakukan donasi melalui platform pembayaran pilihan.");
+        }
+
+        // 3. Sistem Rating dan Ulasan Lokal
+        let reviews = JSON.parse(localStorage.getItem('reviews')) || [];
+
+        function submitReview() {
+            const review = document.getElementById('reviewText').value.trim();
+            const rating = document.querySelector('input[name="rating"]:checked')?.value || 'No rating';
+
+            if (review) {
+                const reviewData = { review, rating };
+                reviews.push(reviewData);
+                localStorage.setItem('reviews', JSON.stringify(reviews));
+                document.getElementById('reviewText').value = '';  // Clear the review input
+                displayReviews();
+                alert('Ulasan Anda berhasil disubmit!');
+            } else {
+                alert('Tulis ulasan terlebih dahulu!');
+            }
+        }
+
+        function displayReviews() {
+            const reviewList = document.getElementById('reviewList');
+            reviewList.innerHTML = ''; // Clear existing reviews
+            reviews.forEach((reviewData, index) => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `Review ${index + 1}: ${reviewData.review} - Rating: ${reviewData.rating}`;
+                reviewList.appendChild(listItem);
+            });
+        }
+
+        // 4. Navigasi dan Rekomendasi Rute Ibadah
+        function showDirections() {
+            const map = L.map('map').setView([-6.6736, 111.0416], 13); // Example: Central Java location
+
+            // Add a tile layer (OpenStreetMap)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+            // Add marker for the destination (can be dynamic)
+            const destination = [-6.6736, 111.0416];  // Example destination
+            L.marker(destination).addTo(map)
+                .bindPopup('Tempat Ibadah')
+                .openPopup();
+
+            // Add routing (from current location to destination)
+            const currentLocation = [-6.6736, 111.0416];  // Example: Current location
+            L.Routing.control({
+                waypoints: [
+                    L.latLng(currentLocation),
+                    L.latLng(destination)
+                ]
+            }).addTo(map);
+        }
+
+        // 5. Informasi Keunikan Tempat Ibadah
+        function showUniqueInfo() {
+            alert("Tempat Ibadah ini memiliki desain arsitektur unik dengan atap berbentuk kubah emas.");
+        }
+
+        // 6. Peta Offline
+        function downloadOfflineMap() {
+            alert("Peta offline berhasil diunduh! Anda bisa mengaksesnya kapan saja tanpa koneksi internet.");
+        }
+
+        // 7. Kolaborasi Komunitas Lokal
+        function submitCollaboration() {
+            const suggestion = document.getElementById('communityCollaboration').value.trim();
+            if (suggestion) {
+                alert('Terima kasih atas kolaborasi Anda!');
+            } else {
+                alert('Masukkan kegiatan atau saran terlebih dahulu!');
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto py-5">
+        <h1 class="text-3xl font-bold text-center mb-5">Fitur Tambahan</h1>
+
+        <!-- Fitur List -->
+        <ul class="space-y-4">
+            <li>
+                <button onclick="requestNotificationPermission()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Notifikasi Jadwal Kegiatan</button>
+            </li>
+            <li>
+                <button onclick="donate()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Fitur Donasi Digital</button>
+            </li>
+            <li>
+                <button onclick="document.getElementById('reviewModal').style.display='block'" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Sistem Rating dan Ulasan Lokal</button>
+            </li>
+            <li>
+                <button onclick="showDirections()" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">Navigasi dan Rekomendasi Rute Ibadah</button>
+            </li>
+            <li>
+                <button onclick="showUniqueInfo()" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">Informasi Keunikan Tempat Ibadah</button>
+            </li>
+            <li>
+                <button onclick="downloadOfflineMap()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Peta Offline</button>
+            </li>
+            <li>
+                <button onclick="document.getElementById('collaborationModal').style.display='block'" class="bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600">Kolaborasi Komunitas Lokal</button>
+            </li>
+        </ul>
+
+        <!-- Modal for Rating and Reviews -->
+        <div id="reviewModal" class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50" style="display: none;">
+            <div class="bg-white p-5 rounded-lg w-1/3">
+                <h2 class="text-2xl font-semibold mb-3">Tulis Ulasan</h2>
+                <textarea id="reviewText" class="w-full p-2 border rounded mb-3" placeholder="Tulis ulasan Anda"></textarea>
+                <div class="mb-3">
+                    <label class="mr-2">Rating:</label>
+                    <input type="radio" name="rating" value="1"> 1
+                    <input type="radio" name="rating" value="2"> 2
+                    <input type="radio" name="rating" value="3"> 3
+                    <input type="radio" name="rating" value="4"> 4
+                    <input type="radio" name="rating" value="5"> 5
+                </div>
+                <button onclick="submitReview()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Kirim Ulasan</button>
+                <button onclick="document.getElementById('reviewModal').style.display='none'" class="ml-2 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Tutup</button>
+                <ul id="reviewList" class="mt-5"></ul>
+            </div>
+        </div>
+
+        <!-- Modal for Community Collaboration -->
+        <div id="collaborationModal" class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50" style="display: none;">
+            <div class="bg-white p-5 rounded-lg w-1/3">
+                <h2 class="text-2xl font-semibold mb-3">Masukkan Kolaborasi Komunitas</h2>
+                <textarea id="communityCollaboration" class="w-full p-2 border rounded mb-3" placeholder="Masukkan saran atau kegiatan komunitas"></textarea>
+                <button onclick="submitCollaboration()" class="bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600">Kirim Kolaborasi</button>
+                <button onclick="document.getElementById('collaborationModal').style.display='none'" class="ml-2 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Tutup</button>
+            </div>
+        </div>
+
+        <!-- Back Button to Main Page -->
+        <div class="mt-5">
+            <a href="index.html" class="bg-blue-500 text-white px-4 py-2 rounded">Kembali ke Peta</a>
+        </div>
+
+        <!-- Map Element -->
+        <div id="map" class="mt-5" style="height: 400px;"></div>
+    </div>
+</body>
+</html>

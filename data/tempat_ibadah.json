@@ -1,0 +1,45 @@
+{
+    "tempat_ibadah": [
+      {
+        "id": 1,
+        "nama": "Masjid Al-Furqan",
+        "alamat": "Jl. Raya No. 10, Pancur, Jepara",
+        "keunikan": "Masjid ini memiliki arsitektur klasik dan luas dengan taman yang indah.",
+        "jadwal_kegiatan": [
+          {
+            "kegiatan": "Sholat Jumat",
+            "waktu": "12:30"
+          },
+          {
+            "kegiatan": "Pengajian",
+            "waktu": "19:00"
+          }
+        ],
+        "koordinat": {
+          "latitude": -6.9631,
+          "longitude": 109.5573
+        }
+      },
+      {
+        "id": 2,
+        "nama": "Gereja Santo Yosef",
+        "alamat": "Jl. Gereja No. 3, Jepara",
+        "keunikan": "Gereja ini terkenal dengan pelaksanaan misa yang meriah dan suasana yang tenang.",
+        "jadwal_kegiatan": [
+          {
+            "kegiatan": "Misa Pagi",
+            "waktu": "08:00"
+          },
+          {
+            "kegiatan": "Ibadah Minggu",
+            "waktu": "10:30"
+          }
+        ],
+        "koordinat": {
+          "latitude": -6.9625,
+          "longitude": 109.5580
+        }
+      }
+    ]
+  }
+  

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peta Interaktif Tempat Ibadah Desa Pancur</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 400px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto py-5">
+        <h1 class="text-3xl font-bold text-center mb-5">Peta Interaktif Tempat Ibadah Desa Pancur</h1>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <!-- Input Section -->
+            <div class="bg-white p-5 rounded shadow">
+                <h2 class="text-xl font-semibold mb-3">Tambah Lokasi</h2>
+                <form id="locationForm" class="space-y-4">
+                    <div>
+                        <label for="name" class="block text-sm font-medium">Nama</label>
+                        <input type="text" id="name" class="w-full p-2 border rounded" required>
+                    </div>
+                    <div>
+                        <label for="category" class="block text-sm font-medium">Kategori</label>
+                        <select id="category" class="w-full p-2 border rounded" required>
+                            <option value="">Pilih Kategori</option>
+                            <option value="Masjid">Masjid</option>
+                            <option value="Gereja">Gereja</option>
+                            <option value="Mushola">Mushola</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="latitude" class="block text-sm font-medium">Latitude</label>
+                        <input type="text" id="latitude" class="w-full p-2 border rounded" readonly>
+                    </div>
+                    <div>
+                        <label for="longitude" class="block text-sm font-medium">Longitude</label>
+                        <input type="text" id="longitude" class="w-full p-2 border rounded" readonly>
+                    </div>
+                    <button type="button" id="saveLocation" class="bg-blue-500 text-white px-4 py-2 rounded w-full">
+                        Simpan Lokasi
+                    </button>
+                </form>
+            </div>
+
+            <!-- Map Section -->
+            <div class="lg:col-span-2">
+                <div id="map" class="rounded shadow"></div>
+            </div>
+        </div>
+
+        <!-- Detail Section -->
+        <div id="detailSection" class="bg-white mt-5 p-5 rounded shadow hidden">
+            <h2 class="text-xl font-semibold mb-3">Detail Tempat Ibadah</h2>
+            <p><strong>Nama:</strong> <span id="detailName"></span></p>
+            <p><strong>Kategori:</strong> <span id="detailCategory"></span></p>
+            <p><strong>Latitude:</strong> <span id="detailLatitude"></span></p>
+            <p><strong>Longitude:</strong> <span id="detailLongitude"></span></p>
+
+            <div class="mt-4 space-y-2">
+                <button id="getDirections" class="bg-green-500 text-white px-4 py-2 rounded">Dapatkan Arah</button>
+                <button id="donate" class="bg-yellow-500 text-white px-4 py-2 rounded">Donasi</button>
+                <button id="review" class="bg-purple-500 text-white px-4 py-2 rounded">Ulasan</button>
+            </div>
+        </div>
+
+        <!-- List of Saved Locations -->
+        <div id="locationList" class="bg-white mt-5 p-5 rounded shadow">
+            <h2 class="text-xl font-semibold mb-3">Daftar Lokasi Tersimpan</h2>
+            <ul id="savedLocations" class="list-disc ml-5 space-y-2"></ul>
+        </div>
+
+        <!-- Navigation Button to Features Page -->
+        <div class="mt-5 text-center">
+            <a href="features.html" class="bg-gray-700 text-white px-4 py-2 rounded">Lihat Fitur Tambahan</a>
+        </div>
+    </div>
+
+    <script>
+        // Initialize the map
+        const map = L.map('map').setView([-6.6736, 111.0416], 15);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+
+        // Variables
+        let selectedLatLng;
+        const savedLocationsList = document.getElementById('savedLocations');
+
+        // Map click event
+        map.on('click', function (e) {
+            selectedLatLng = e.latlng;
+            document.getElementById('latitude').value = selectedLatLng.lat;
+            document.getElementById('longitude').value = selectedLatLng.lng;
+        });
+
+        // Save location functionality
+        document.getElementById('saveLocation').addEventListener('click', function () {
+            const name = document.getElementById('name').value.trim();
+            const category = document.getElementById('category').value;
+            const latitude = document.getElementById('latitude').value;
+            const longitude = document.getElementById('longitude').value;
+
+            if (name && category && latitude && longitude) {
+                // Add marker to map
+                L.marker([latitude, longitude]).addTo(map)
+                    .bindPopup(`<b>${name}</b><br>${category}`).openPopup();
+
+                // Update details section
+                document.getElementById('detailName').textContent = name;
+                document.getElementById('detailCategory').textContent = category;
+                document.getElementById('detailLatitude').textContent = latitude;
+                document.getElementById('detailLongitude').textContent = longitude;
+                document.getElementById('detailSection').classList.remove('hidden');
+
+                // Add to saved locations list
+                const listItem = document.createElement('li');
+                listItem.textContent = `${name} - ${category}`;
+                savedLocationsList.appendChild(listItem);
+            } else {
+                alert('Lengkapi semua detail lokasi sebelum menyimpan!');
+            }
+        });
+    </script>
+</body>
+</html>
